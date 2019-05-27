@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+            margin: 0 auto;
+            /*            width: 100%;*/
+           
+        }
+    </style>
+</head>
+
+<body>
+    <canvas width="600" height="600"></canvas>
+    <!-- 面向过程编写 坐标系-->
+    <script type="application/notScript">
+        var myCanvas = document.querySelector('canvas');
+        var myTool = myCanvas.getContext('2d');
+
+        // 先试着画一条直线
+        //        myTool.beginPath();
+        //        myTool.moveTo(100,100);
+        //        myTool.lineTo(20,100);
+        //        myTool.strokeStyle = 'red';
+        //        myTool.stroke();
+
+        // 画一个三角形
+        //        myTool.beginPath();
+        //        myTool.moveTo(0,0);
+        //        myTool.lineTo(100,0);
+        //        myTool.lineTo(100,80);
+        //        myTool.closePath();
+        //        myTool.lineWidth = 10;
+        //        myTool.strokeStyle = 'green';
+        //        myTool.fillStyle = 'red';
+        //        myTool.stroke();
+        //        myTool.fill();
+
+        // 折现图制作  面向对象方法
+        var width = 20;
+        var canvasWidth = myTool.canvas.width;
+        var canvasHeight = myTool.canvas.height;
+        //        //        console.log(canvasWidth + '=====' + canvasHeight)
+        //        var totalLine = {
+        //            x: Math.floor(canvasWidth / width),
+        //            y: Math.floor(canvasHeight / width)
+        //        }
+        //        for (var i = 1; i < totalLine.x; i++) {
+        //            myTool.beginPath();
+        //            myTool.moveTo(i * width - .5, 0);
+        //            myTool.lineTo(i * width - .5, canvasHeight);
+        //            myTool.strokeStyle = 'red';
+        //            myTool.stroke();
+        //        }
+        //        for (var i = 1; i < totalLine.y; i++) {
+        //            myTool.beginPath();
+        //            myTool.moveTo(0, i * width - .5);
+        //            myTool.lineTo(canvasWidth, i * width - .5);
+        //            myTool.strokeStyle = 'green';
+        //            myTool.stroke();
+        //        }
+
+        // 绘制坐标系 coordForm
+        var dis = 40;
+        var triHei = 10;
+        var origin = {
+            x: dis,
+            y: canvasHeight - dis
+        }
+        var len = {
+            x: canvasWidth - dis,
+            y: canvasHeight - dis
+        }
+
+        // 画点
+        //        myTool.beginPath();
+        //        myTool.moveTo(origin.x - 5, origin.y - 5);
+        //        myTool.lineTo(origin.x + 5, origin.y - 5);
+        //        myTool.lineTo(origin.x + 5, origin.y + 5);
+        //        myTool.lineTo(origin.x - 5, origin.y + 5);
+        //        myTool.closePath();
+        //        myTool.strokeStyle = 'red';
+        //        myTool.fill();
+
+        // 画坐标系 x
+        //        myTool.beginPath();
+        //        myTool.moveTo(origin.x, origin.y);
+        //        myTool.lineTo(len.x, origin.y);
+        //        myTool.lineTo(len.x - triHei, origin.y - 5);
+        //        myTool.lineTo(len.x - triHei, origin.y + 5);
+        //        myTool.lineTo(len.x, origin.y);
+        //        myTool.strokeStyle = '#000';
+        //        myTool.stroke();
+        //        myTool.fill();
+        //
+        //        // 画坐标系 y
+        //        myTool.beginPath();
+        //        myTool.moveTo(origin.x, origin.y);
+        //        myTool.lineTo(origin.x, dis);
+        //        myTool.lineTo(origin.x - 5, dis + 10);
+        //        myTool.lineTo(origin.x + 5, dis + 10);
+        //        myTool.lineTo(origin.x, dis);
+        //        myTool.strokeStyle = '#000';
+        //        myTool.stroke();
+        //        myTool.fill();
+    </script>
+    <script>
+        // 面向对象
+        function PolyChart(ctx) {
+            this.ctx = ctx || document.querySelector('canvas').getContext('2d');
+            this.canvasWidth = this.ctx.canvas.width;
+            this.canvasHeight = this.ctx.canvas.height;
+            this.gridWidth = 10;
+            this.dis = 20;
+            this.coordXY = {
+                x: this.dis,
+                y: this.canvasHeight - this.dis
+            }
+        }
+        PolyChart.prototype.init = function (data) {
+            this.grid();
+            this.coord();
+            this.drawPoint(data);
+        };
+        // 网格对象
+        PolyChart.prototype.grid = function () {
+                var totalLine = {
+                    x: Math.floor(this.canvasWidth / this.gridWidth),
+                    y: Math.floor(this.canvasHeight / this.gridWidth)
+                }
+                for (var i = 1; i < totalLine.x; i++) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(i * this.gridWidth - .5, 0);
+                    this.ctx.lineTo(i * this.gridWidth - .5, this.canvasHeight);
+                    this.ctx.strokeStyle = '#eee';
+                    this.ctx.stroke();
+                }
+                for (var i = 1; i < totalLine.y; i++) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, i * this.gridWidth - .5);
+                    this.ctx.lineTo(this.canvasWidth, i * this.gridWidth - .5);
+                    this.ctx.strokeStyle = '#eee';
+                    this.ctx.stroke();
+                }
+            }
+            // 坐标系对象
+        PolyChart.prototype.coord = function () {
+            var maxX = this.canvasWidth - this.coordXY.x
+
+            // 坐标系 x轴
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.coordXY.x, this.coordXY.y);
+            this.ctx.lineTo(maxX, this.coordXY.y);
+            this.ctx.lineTo(maxX - 10, this.coordXY.y - 5);
+            this.ctx.lineTo(maxX - 10, this.coordXY.y + 5);
+            this.ctx.lineTo(maxX, this.coordXY.y);
+            this.ctx.strokeStyle = '#000';
+            this.ctx.stroke();
+            this.ctx.fill();
+            // 坐标系 y轴
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.coordXY.x, this.coordXY.y);
+            this.ctx.lineTo(this.coordXY.x, this.dis);
+            this.ctx.lineTo(this.coordXY.x - 5, this.dis + 10);
+            this.ctx.lineTo(this.coordXY.x + 5, this.dis + 10);
+            this.ctx.lineTo(this.coordXY.x, this.dis);
+            this.ctx.stroke();
+            this.ctx.fill();
+        }
+        // 五颜六色功能
+        PolyChart.prototype.randomColor = function (){
+            var r = Math.floor(Math.random() * 256);
+            var g = Math.floor(Math.random() * 256);
+            var b = Math.floor(Math.random() * 256);
+            return 'rgb('+r+','+g+','+b+')';
+        }
+        // 在坐标系上描述点
+        PolyChart.prototype.drawPoint = function (data) {
+                // 用原点表示 点
+            var currentX = 0;
+            var currentY = 0;
+            // 设置文本属性
+            this.ctx.font = "20px SimSun";
+            this.ctx.textAlign = "center";
+            this.ctx.textBaseline = 'bottom';
+            for (var i =0; i<data.length ; i++){
+                    var x =(this.coordXY.x + data[i].x)
+                    var y = (this.coordXY.y - data[i].y)
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x,y);
+                    this.ctx.arc(x ,y, 5, 0, 2 * Math.PI * 5 )
+                    this.ctx.fillStyle = this.randomColor();
+                    this.ctx.fill();
+                    // 坐标连线
+                    if (i == 0){
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(this.coordXY.x,this.coordXY.y);
+                        this.ctx.lineTo(x , y);
+                        currentX =x;
+                        currentY = y
+                        this.ctx.stroke();
+                    }else{
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(currentX,currentY);
+                        this.ctx.lineTo(x , y);
+                        currentX =x;
+                        currentY = y
+                        this.ctx.stroke();
+                    }
+                    // 添加标题
+                    
+                    this.ctx.fillText(data[i]['title'], x , y - 5);
+                    // 给标题加下划线 试试
+                    var textW = this.ctx.measureText(data[i]['title']).width /2 ;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x -textW , y -5);
+                    this.ctx.lineTo(x +textW , y -5)
+                    this.ctx.stroke();
+                }
+            }
+        // 添加文本功能 
+            // 实例化对象
+        var data = [
+        {
+            title: 'hello',
+            x: 100,
+            y: 120
+        },
+        {
+            title: 'world',
+            x: 200,
+            y: 160
+        },
+        {
+            title: '我真帅',
+            x: 300,
+            y: 240
+        },
+        {
+            title: '嘻嘻哈哈',
+            x: 400,
+            y: 120
+        },
+        {
+            title: '咦咦咦',
+            x: 500,
+            y: 80
+        }
+    ];
+        var polyline = new PolyChart();
+        polyline.init(data);
+    </script>
+</body>
+
+</html>
